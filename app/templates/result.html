@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Sentiment Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+<header>
+  <h1>🎬 IMDB Sentiment Analyzer</h1>
+  <p>Analysis Result</p>
+</header>
+
+<main>
+  <div class="result-banner {{ result.sentiment }}-banner">
+    <div class="emoji">{% if result.sentiment == 'positive' %}😊{% else %}😞{% endif %}</div>
+    <div class="result-label {{ result.sentiment }}-label">{{ result.sentiment | upper }}</div>
+    <div class="conf-text">Confidence: <strong>{{ result.confidence }}%</strong> &nbsp;·&nbsp; Model: {{ result.model_used }}</div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Probability Breakdown</h2>
+    <div class="prob-row">
+      <div class="prob-label"><span>😊 Positive</span><span>{{ result.prob_positive }}%</span></div>
+      <div class="bar-bg"><div class="bar-fill bar-pos" style="width:{{ result.prob_positive }}%"></div></div>
+    </div>
+    <div class="prob-row" style="margin-top:14px">
+      <div class="prob-label"><span>😞 Negative</span><span>{{ result.prob_negative }}%</span></div>
+      <div class="bar-bg"><div class="bar-fill bar-neg" style="width:{{ result.prob_negative }}%"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📝 Review Details</h2>
+    <div class="meta-row">
+      <span class="badge">Model: {{ result.model_used }}</span>
+      <span class="badge">Words: {{ result.review.split()|length }}</span>
+    </div>
+    <p class="sub-label">Original review:</p>
+    <div class="review-box">{{ result.review }}</div>
+    <p class="sub-label" style="margin-top:14px">Preprocessed tokens (first 300 chars):</p>
+    <div class="token-box">{{ result.cleaned_text }}</div>
+  </div>
+
+  <a href="/" class="btn-back">← Analyze Another Review</a>
+</main>
+
+<footer>Built with Flask · scikit-learn · NLTK · IMDB 50K Dataset</footer>
+</body>
+</html>

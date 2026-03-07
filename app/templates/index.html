@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>IMDB Sentiment Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+<header>
+  <h1>🎬 IMDB Sentiment Analyzer</h1>
+  <p>NLP-powered opinion mining — Naive Bayes · Logistic Regression · SVM · Ensemble</p>
+</header>
+
+<main>
+  {% if error %}
+  <div class="alert-error">⚠️ {{ error }}</div>
+  {% endif %}
+
+  <div class="card">
+    <h2>📝 Analyze a Movie Review</h2>
+    <form method="POST" action="/predict">
+
+      <label for="review">Enter your movie review:</label>
+      <textarea id="review" name="review" rows="6"
+        placeholder="e.g. This film was absolutely breathtaking! The performances were Oscar-worthy..."></textarea>
+
+      <label style="margin-top:20px; display:block;">Select classification model:</label>
+      <div class="model-grid">
+        <div class="model-option">
+          <input type="radio" id="m_ensemble" name="model" value="ensemble" checked>
+          <label for="m_ensemble">🏆 Ensemble (Recommended)</label>
+        </div>
+        <div class="model-option">
+          <input type="radio" id="m_lr" name="model" value="lr">
+          <label for="m_lr">📈 Logistic Regression</label>
+        </div>
+        <div class="model-option">
+          <input type="radio" id="m_svm" name="model" value="svm">
+          <label for="m_svm">⚡ Support Vector Machine</label>
+        </div>
+        <div class="model-option">
+          <input type="radio" id="m_nb" name="model" value="nb">
+          <label for="m_nb">🧮 Naive Bayes</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-analyze">🔍 Analyze Sentiment</button>
+    </form>
+
+    <div class="examples">
+      <p class="examples-title">💡 Try an example:</p>
+      <div class="pill-row">
+        <span class="pill" onclick="fill(this)">A masterpiece — stunning visuals and brilliant acting!</span>
+        <span class="pill" onclick="fill(this)">Terrible film. A complete waste of time and money.</span>
+        <span class="pill" onclick="fill(this)">Great cinematography but the plot was predictable.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card info-card">
+    <h2>📊 Model Info</h2>
+    <div class="stat-row">
+      <div class="stat"><span class="num">50K</span><span class="lbl">Training Reviews</span></div>
+      <div class="stat"><span class="num">~93%</span><span class="lbl">Ensemble Accuracy</span></div>
+      <div class="stat"><span class="num">50K</span><span class="lbl">TF-IDF Features</span></div>
+      <div class="stat"><span class="num">4</span><span class="lbl">Models Available</span></div>
+    </div>
+  </div>
+</main>
+
+<footer>Built with Flask · scikit-learn · NLTK · IMDB 50K Dataset</footer>
+
+<script>
+function fill(el) {
+  document.getElementById('review').value = el.textContent.trim();
+}
+</script>
+</body>
+</html>

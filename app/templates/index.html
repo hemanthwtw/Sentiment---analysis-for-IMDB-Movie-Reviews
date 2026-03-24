@@ -10,6 +10,7 @@
 <header>
   <h1>🎬 IMDB Sentiment Analyzer</h1>
   <p>NLP-powered opinion mining — Naive Bayes · Logistic Regression · SVM · Ensemble</p>
+  <a href="/" class="btn-back" style="margin-top: 14px;">← Back to Home</a>
 </header>
 
 <main>
@@ -21,9 +22,11 @@
     <h2>📝 Analyze a Movie Review</h2>
     <form method="POST" action="/predict">
 
-      <label for="review">Enter your movie review:</label>
-      <textarea id="review" name="review" rows="6"
-        placeholder="e.g. This film was absolutely breathtaking! The performances were Oscar-worthy..."></textarea>
+      <label for="movie_name">Movie Name:</label>
+      <input type="text" id="movie_name" name="movie_name" placeholder="e.g. The Shawshank Redemption" required>
+
+      <label for="review" style="margin-top:20px;">Enter your movie review:</label>
+      <textarea id="review" name="review" rows="6" placeholder="e.g. This film was absolutely breathtaking! The performances were Oscar-worthy..." required></textarea>
 
       <label style="margin-top:20px; display:block;">Select classification model:</label>
       <div class="model-grid">
@@ -58,6 +61,31 @@
     </div>
   </div>
 
+  <div class="card">
+    <h2>📚 Bulk Text Analysis</h2>
+    <form method="POST" action="/predict_bulk_text">
+      <label for="bulk_movie_name">Movie Name:</label>
+      <input type="text" id="bulk_movie_name" name="movie_name" placeholder="e.g. The Shawshank Redemption" required>
+
+      <label for="bulk_reviews" style="margin-top:20px;">Enter one review per line:</label>
+      <textarea id="bulk_reviews" name="bulk_reviews" rows="8" required
+        placeholder="Review 1...&#10;Review 2...&#10;Review 3..."></textarea>
+      <button type="submit" class="btn-analyze" style="margin-top:14px;">📊 Analyze Bulk Text</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>📁 Bulk File Analysis (CSV/XLSX)</h2>
+    <form method="POST" action="/predict_bulk_file" enctype="multipart/form-data">
+      <label for="file_movie_name">Movie Name:</label>
+      <input type="text" id="file_movie_name" name="movie_name" placeholder="e.g. The Shawshank Redemption" required>
+
+      <label for="reviews_file" style="margin-top:14px;">Upload a file with a column containing "review" or "text":</label>
+      <input id="reviews_file" name="reviews_file" type="file" accept=".csv,.xlsx" required>
+      <button type="submit" class="btn-analyze" style="margin-top:14px;">📈 Analyze Uploaded File</button>
+    </form>
+  </div>
+
   <div class="card info-card">
     <h2>📊 Model Info</h2>
     <div class="stat-row">
@@ -75,6 +103,8 @@
 function fill(el) {
   document.getElementById('review').value = el.textContent.trim();
 }
+
+
 </script>
 </body>
 </html>

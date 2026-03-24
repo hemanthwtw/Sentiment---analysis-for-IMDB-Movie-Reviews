@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>IMDB Sentiment Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+<header>
+  <h1>🎬 IMDB Sentiment Analyzer</h1>
+  <p>NLP-powered opinion mining and sentiment detection</p>
+</header>
+
+<main>
+  <div class="welcome-container">
+    <!-- Hero Section -->
+    <div class="hero-card">
+      <div class="hero-content">
+        <h2>Analyze Movie Reviews with AI</h2>
+        <p>Powered by advanced machine learning models (Ensemble, Logistic Regression, SVM, and Naive Bayes)</p>
+        <div class="hero-features">
+          <div class="feature">
+            <span class="feature-icon">📝</span>
+            <p><strong>Single Reviews</strong><br/>Analyze individual movie reviews</p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">⭐</span>
+            <p><strong>Auto Ratings</strong><br/>Get AI-calculated star ratings from sentiment</p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">📊</span>
+            <p><strong>Bulk Analysis</strong><br/>Process multiple reviews at once</p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🤖</span>
+            <p><strong>Multiple Models</strong><br/>Compare different ML algorithms</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="card">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Enter Your Review</h3>
+          <p>Paste a movie review or analysis text</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Choose a Model</h3>
+          <p>Select from Ensemble, Logistic Regression, SVM, or Naive Bayes</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Get Insights</h3>
+          <p>View sentiment classification with confidence scores</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Download Results</h3>
+          <p>Export bulk analysis results as CSV</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Models Section -->
+    <div class="card">
+      <h2>Available Models</h2>
+      <div class="models-grid">
+        <div class="model-info">
+          <h3>🏆 Ensemble</h3>
+          <p>Combines multiple models for best accuracy. <strong>Recommended for most use cases.</strong></p>
+        </div>
+        <div class="model-info">
+          <h3>📈 Logistic Regression</h3>
+          <p>Fast and interpretable linear classification model.</p>
+        </div>
+        <div class="model-info">
+          <h3>⚡ Support Vector Machine</h3>
+          <p>Powerful non-linear classification with high accuracy.</p>
+        </div>
+        <div class="model-info">
+          <h3>🧮 Naive Bayes</h3>
+          <p>Probabilistic model based on Bayes' theorem.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+      <h2>Ready to Analyze?</h2>
+      <p>Start classifying movie reviews instantly</p>
+      <div class="cta-buttons">
+        <a href="/analyzer" class="btn-primary">📝 Analyze Single Review</a>
+        <a href="/analyzer#bulk" class="btn-secondary">📊 Bulk Analysis</a>
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="card info-card">
+      <h2>About This Analyzer</h2>
+      <p>This sentiment analyzer was built using the <strong>IMDB Movie Reviews Dataset</strong> with over 50,000 labeled reviews. The application uses Natural Language Processing (NLP) techniques including:</p>
+      <ul class="info-list">
+        <li><strong>Text Preprocessing:</strong> Tokenization, lemmatization, and stop word removal</li>
+        <li><strong>Feature Extraction:</strong> TF-IDF vectorization for numerical representation</li>
+        <li><strong>Multiple Models:</strong> Ensemble methods combining Logistic Regression, SVM, and Naive Bayes</li>
+        <li><strong>Rule-Based Overrides:</strong> Enhanced detection of strong sentiment patterns</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>IMDB Sentiment Analyzer © 2026 | Built with Flask, Scikit-learn, and NLP</p>
+</footer>
+</body>
+</html>

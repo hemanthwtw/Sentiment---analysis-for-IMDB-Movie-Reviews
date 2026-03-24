@@ -3,12 +3,16 @@ import joblib, re, os, nltk, html
 import pandas as pd
 import io
 import uuid
+import requests
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from config import TMDB_API_KEY, TMDB_READ_TOKEN
 
 app = Flask(__name__)
 BULK_RESULTS_CACHE = {}
+TMDB_BASE_URL = "https://api.themoviedb.org/3"
+TMDB_TIMEOUT_SECONDS = 8
 
 MODEL_DIR = os.path.join("..", "models")
 tfidf    = joblib.load(os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl"))
@@ -144,6 +148,15 @@ def cache_bulk_results(dashboard):
         BULK_RESULTS_CACHE.pop(oldest_key, None)
     return token
 
+
+def tmdb_headers() -> dict:
+    if TMDB_READ_TOKEN:
+        return {
+            "Authorization": f"Bearer {TMDB_READ_TOKEN}",
+            "Accept": "application/json",
+        }
+    return {"Accept": "application/json"}
+
 @app.route("/")
 def welcome():
     return render_template("welcome.html")
@@ -152,9 +165,60 @@ def welcome():
 def index():
     return render_template("index.html")
 
+
+@app.route("/get_suggestions", methods=["GET"])
+def get_suggestions():
+    query = request.args.get("q", "").strip()
+    if len(query) < 2:
+        return jsonify([])
+
+    # If no credentials are configured, fail soft for the UI.
+    if not TMDB_API_KEY and not TMDB_READ_TOKEN:
+        return jsonify([])
+
+    params = {
+        "query": query,
+        "include_adult": "false",
+        "language": "en-US",
+        "page": 1,
+    }
+    if TMDB_API_KEY:
+        params["api_key"] = TMDB_API_KEY
+
+    try:
+        response = requests.get(
+            f"{TMDB_BASE_URL}/search/movie",
+            params=params,
+            headers=tmdb_headers(),
+            timeout=TMDB_TIMEOUT_SECONDS,
+        )
+        response.raise_for_status()
+        payload = response.json()
+    except requests.RequestException:
+        return jsonify([])
+
+    suggestions = []
+    for movie in payload.get("results", [])[:8]:
+        title = (movie.get("title") or movie.get("name") or "").strip()
+        if not title:
+            continue
+
+        release_date = movie.get("release_date") or ""
+        release_year = release_date[:4] if len(release_date) >= 4 else "N/A"
+        suggestions.append({
+            "id": movie.get("id"),
+            "title": title,
+            "release_year": release_year,
+            "overview": (movie.get("overview") or "No overview available.").strip(),
+        })
+
+    return jsonify(suggestions)
+
 @app.route("/predict", methods=["POST"])
 def predict():
     movie_name = request.form.get("movie_name", "").strip()
+    movie_overview = request.form.get("movie_overview", "").strip()
+    movie_release_year = request.form.get("movie_release_year", "").strip()
     review    = request.form.get("review", "").strip()
     model_key = request.form.get("model", "ensemble")
     
@@ -176,6 +240,8 @@ def predict():
     
     result  = {
         "movie_name"    : movie_name,
+        "movie_overview": movie_overview,
+        "movie_release_year": movie_release_year,
         "rating"        : rating,
         "review"        : review,
         "sentiment"     : "positive" if pred == 1 else "negative",

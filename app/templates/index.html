@@ -23,7 +23,17 @@
     <form method="POST" action="/predict">
 
       <label for="movie_name">Movie Name:</label>
-      <input type="text" id="movie_name" name="movie_name" placeholder="e.g. The Shawshank Redemption" required>
+      <div class="autocomplete-wrap">
+        <input type="text" id="movie_name" name="movie_name" placeholder="Search movie title (e.g. The Shawshank Redemption)" autocomplete="off" required>
+        <div id="movie_suggestions" class="autocomplete-list"></div>
+      </div>
+      <input type="hidden" id="movie_overview" name="movie_overview">
+      <input type="hidden" id="movie_release_year" name="movie_release_year">
+
+      <div id="movie_info_card" class="movie-info-card" style="display:none;">
+        <p class="movie-info-title" id="movie_info_title"></p>
+        <p class="movie-info-overview" id="movie_info_overview"></p>
+      </div>
 
       <label for="review" style="margin-top:20px;">Enter your movie review:</label>
       <textarea id="review" name="review" rows="6" placeholder="e.g. This film was absolutely breathtaking! The performances were Oscar-worthy..." required></textarea>
@@ -103,6 +113,93 @@
 function fill(el) {
   document.getElementById('review').value = el.textContent.trim();
 }
+
+const movieInput = document.getElementById('movie_name');
+const suggestionsBox = document.getElementById('movie_suggestions');
+const infoCard = document.getElementById('movie_info_card');
+const infoTitle = document.getElementById('movie_info_title');
+const infoOverview = document.getElementById('movie_info_overview');
+const movieOverviewInput = document.getElementById('movie_overview');
+const movieReleaseYearInput = document.getElementById('movie_release_year');
+
+let suggestTimer = null;
+
+function clearSuggestions() {
+  suggestionsBox.innerHTML = '';
+  suggestionsBox.style.display = 'none';
+}
+
+function renderSuggestions(items) {
+  if (!items.length) {
+    clearSuggestions();
+    return;
+  }
+
+  suggestionsBox.innerHTML = items.map((movie) => {
+    const title = movie.title || 'Untitled';
+    const year = movie.release_year || 'N/A';
+    return `<button type="button" class="suggestion-item" data-title="${title.replace(/"/g, '&quot;')}" data-year="${year}" data-overview="${(movie.overview || '').replace(/"/g, '&quot;')}"><span>${title}</span><span class="suggestion-year">${year}</span></button>`;
+  }).join('');
+  suggestionsBox.style.display = 'block';
+}
+
+async function fetchSuggestions(query) {
+  try {
+    const response = await fetch(`/get_suggestions?q=${encodeURIComponent(query)}`);
+    if (!response.ok) {
+      clearSuggestions();
+      return;
+    }
+    const items = await response.json();
+    renderSuggestions(Array.isArray(items) ? items : []);
+  } catch (err) {
+    clearSuggestions();
+  }
+}
+
+movieInput.addEventListener('input', () => {
+  const query = movieInput.value.trim();
+  movieOverviewInput.value = '';
+  movieReleaseYearInput.value = '';
+  infoCard.style.display = 'none';
+
+  if (suggestTimer) {
+    clearTimeout(suggestTimer);
+  }
+  if (query.length < 2) {
+    clearSuggestions();
+    return;
+  }
+
+  suggestTimer = setTimeout(() => fetchSuggestions(query), 250);
+});
+
+suggestionsBox.addEventListener('click', (event) => {
+  const button = event.target.closest('.suggestion-item');
+  if (!button) {
+    return;
+  }
+
+  const title = button.dataset.title || '';
+  const year = button.dataset.year || 'N/A';
+  const overview = button.dataset.overview || 'No overview available.';
+
+  movieInput.value = title;
+  movieReleaseYearInput.value = year;
+  movieOverviewInput.value = overview;
+
+  infoTitle.textContent = `${title} (${year})`;
+  infoOverview.textContent = overview;
+  infoCard.style.display = 'block';
+
+  clearSuggestions();
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.autocomplete-wrap')) {
+    clearSuggestions();
+  }
+});
 
 
 </script>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>IMDB Sentiment Analyzer</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <header>
@@ -90,6 +91,45 @@
       </div>
     </div>
 
+    <div class="card accuracy-dashboard">
+      <h2>Model Accuracy Dashboard</h2>
+      <p class="dashboard-subtitle">Quick benchmark view across our trained classifiers.</p>
+
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h3>Accuracy Comparison (%)</h3>
+          <canvas id="accuracyBarChart" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Performance Share</h3>
+          <canvas id="accuracyDonutChart" height="220"></canvas>
+        </div>
+      </div>
+
+      <div class="accuracy-bars">
+        <div class="accuracy-row">
+          <span>Ensemble</span>
+          <div class="accuracy-track"><div class="accuracy-fill fill-ensemble" style="width:93%"></div></div>
+          <strong>93%</strong>
+        </div>
+        <div class="accuracy-row">
+          <span>SVM</span>
+          <div class="accuracy-track"><div class="accuracy-fill fill-svm" style="width:90%"></div></div>
+          <strong>90%</strong>
+        </div>
+        <div class="accuracy-row">
+          <span>Logistic Regression</span>
+          <div class="accuracy-track"><div class="accuracy-fill fill-lr" style="width:89%"></div></div>
+          <strong>89%</strong>
+        </div>
+        <div class="accuracy-row">
+          <span>Naive Bayes</span>
+          <div class="accuracy-track"><div class="accuracy-fill fill-nb" style="width:86%"></div></div>
+          <strong>86%</strong>
+        </div>
+      </div>
+    </div>
+
     <!-- CTA Section -->
     <div class="cta-section">
       <h2>Ready to Analyze?</h2>
@@ -117,5 +157,71 @@
 <footer>
   <p>IMDB Sentiment Analyzer © 2026 | Built with Flask, Scikit-learn, and NLP</p>
 </footer>
+
+<script>
+const modelLabels = ["Ensemble", "SVM", "Logistic Regression", "Naive Bayes"];
+const modelAccuracy = [93, 90, 89, 86];
+
+const barCtx = document.getElementById("accuracyBarChart");
+if (barCtx) {
+  new Chart(barCtx, {
+    type: "bar",
+    data: {
+      labels: modelLabels,
+      datasets: [{
+        label: "Accuracy %",
+        data: modelAccuracy,
+        backgroundColor: ["#58a6ff", "#3fb950", "#a371f7", "#f2cc60"],
+        borderRadius: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+      },
+      scales: {
+        y: {
+          min: 80,
+          max: 100,
+          ticks: { color: "#8b949e" },
+          grid: { color: "rgba(139,148,158,0.2)" },
+        },
+        x: {
+          ticks: { color: "#8b949e" },
+          grid: { display: false },
+        },
+      },
+    },
+  });
+}
+
+const donutCtx = document.getElementById("accuracyDonutChart");
+if (donutCtx) {
+  new Chart(donutCtx, {
+    type: "doughnut",
+    data: {
+      labels: modelLabels,
+      datasets: [{
+        data: modelAccuracy,
+        backgroundColor: ["#58a6ff", "#3fb950", "#a371f7", "#f2cc60"],
+        borderColor: "#161b22",
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: "#8b949e" },
+        },
+      },
+      cutout: "64%",
+    },
+  });
+}
+</script>
 </body>
 </html>

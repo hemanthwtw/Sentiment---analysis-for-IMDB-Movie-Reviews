@@ -1,5 +1,6 @@
 flask
 pandas
+openpyxl
 numpy
 scikit-learn
 nltk
@@ -9,4 +10,5 @@ wordcloud
 joblib
 ipykernel
 jupyter
-notebook
+notebookpython
+requests
